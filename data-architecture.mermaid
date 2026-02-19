@@ -1,0 +1,97 @@
+graph TB
+    subgraph Sources["Data Sources"]
+        API["PokeAPI<br/>(External REST API)"]
+        User["User Input<br/>(FastAPI Endpoint)"]
+    end
+    
+    subgraph Ingestion["Data Ingestion Layer"]
+        FastAPI["FastAPI Application<br/>- Input Validation<br/>- API Orchestration"]
+    end
+    
+    subgraph Staging["STAGING LAYER"]
+        RawJSON["Raw JSON Storage<br/>stg_pokemon_raw<br/>- Original API Response<br/>- Timestamp<br/>- Request Metadata"]
+        RawLog["API Call Logs<br/>- Request/Response<br/>- Timestamps<br/>- Status Codes"]
+    end
+    
+    subgraph ODS["OPERATIONAL DATA STORE (ODS)"]
+        direction TB
+        NormTables["Normalized Tables"]
+        
+        subgraph Tables["Current State Tables"]
+            PokemonAbilities["pokemon_abilities<br/>- id (PK)<br/>- raw_id<br/>- user_id<br/>- pokemon_ability_id<br/>- effect<br/>- language<br/>- short_effect"]
+            
+            PokemonMaster["pokemon_master<br/>- pokemon_id (PK)<br/>- pokemon_name<br/>- pokemon_url"]
+            
+            AbilityMaster["ability_master<br/>- ability_id (PK)<br/>- ability_name<br/>- is_hidden<br/>- generation"]
+            
+            LanguageMaster["language_master<br/>- language_id (PK)<br/>- language_name<br/>- language_code"]
+        end
+    end
+    
+    subgraph DWH["DATA WAREHOUSE LAYER"]
+        direction TB
+        
+        subgraph FactTables["Fact Tables"]
+            FactAbility["fact_ability_requests<br/>- request_id (PK)<br/>- date_key (FK)<br/>- user_key (FK)<br/>- ability_key (FK)<br/>- request_count<br/>- response_time_ms<br/>- success_flag"]
+            
+            FactUsage["fact_pokemon_usage<br/>- usage_id (PK)<br/>- pokemon_key (FK)<br/>- ability_key (FK)<br/>- date_key (FK)<br/>- usage_count"]
+        end
+        
+        subgraph DimTables["Dimension Tables"]
+            DimPokemon["dim_pokemon<br/>- pokemon_key (PK)<br/>- pokemon_id (NK)<br/>- pokemon_name<br/>- pokemon_type<br/>- generation<br/>- valid_from<br/>- valid_to<br/>- is_current"]
+            
+            DimAbility["dim_ability<br/>- ability_key (PK)<br/>- ability_id (NK)<br/>- ability_name<br/>- category<br/>- valid_from<br/>- valid_to<br/>- is_current"]
+            
+            DimUser["dim_user<br/>- user_key (PK)<br/>- user_id (NK)<br/>- registration_date<br/>- user_segment"]
+            
+            DimDate["dim_date<br/>- date_key (PK)<br/>- date<br/>- year<br/>- month<br/>- quarter<br/>- day_of_week"]
+            
+            DimLanguage["dim_language<br/>- language_key (PK)<br/>- language_id (NK)<br/>- language_name<br/>- language_code"]
+        end
+    end
+    
+    subgraph Analytics["Analytics & Reporting"]
+        BI["BI Tools<br/>- Tableau<br/>- Power BI<br/>- Metabase"]
+        Reports["Reports<br/>- Usage Analytics<br/>- Pokemon Popularity<br/>- API Performance"]
+    end
+    
+    %% Data Flow
+    API -->|JSON Response| FastAPI
+    User -->|POST Request| FastAPI
+    
+    FastAPI -->|Raw Data| RawJSON
+    FastAPI -->|Logs| RawLog
+    
+    RawJSON -->|ETL: Extract & Validate| PokemonAbilities
+    RawJSON -->|ETL: Parse & Normalize| PokemonMaster
+    RawJSON -->|ETL: Parse & Normalize| AbilityMaster
+    RawJSON -->|ETL: Parse & Normalize| LanguageMaster
+    
+    PokemonAbilities -->|Daily Batch ETL| FactAbility
+    PokemonAbilities -->|Daily Batch ETL| FactUsage
+    
+    PokemonMaster -->|SCD Type 2| DimPokemon
+    AbilityMaster -->|SCD Type 2| DimAbility
+    LanguageMaster -->|SCD Type 1| DimLanguage
+    
+    FactAbility --> BI
+    FactUsage --> BI
+    DimPokemon --> BI
+    DimAbility --> BI
+    DimUser --> BI
+    DimDate --> BI
+    
+    BI --> Reports
+    
+    style Sources fill:#e1f5ff
+    style Ingestion fill:#fff4e1
+    style Staging fill:#ffe1e1
+    style ODS fill:#e1ffe1
+    style DWH fill:#f0e1ff
+    style Analytics fill:#ffe1f0
+    
+    style FastAPI fill:#4CAF50,color:#fff
+    style RawJSON fill:#FF9800,color:#fff
+    style PokemonAbilities fill:#2196F3,color:#fff
+    style FactAbility fill:#9C27B0,color:#fff
+    style DimPokemon fill:#9C27B0,color:#fff

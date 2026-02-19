@@ -1,0 +1,150 @@
+{
+  "info": {
+    "name": "Flip Pokemon Ability API",
+    "description": "Collection for testing Pokemon Ability API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        },
+        "description": "Check if the API is healthy and database is connected"
+      },
+      "response": []
+    },
+    {
+      "name": "Root Endpoint",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        },
+        "description": "Get API information"
+      },
+      "response": []
+    },
+    {
+      "name": "Process Ability - Ditto (150)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"raw_id\": \"7dsa8d7sa9dsa\",\n  \"user_id\": \"5199434\",\n  \"pokemon_ability_id\": \"150\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/process-ability",
+          "host": ["{{base_url}}"],
+          "path": ["process-ability"]
+        },
+        "description": "Process Impostor ability (Ditto's ability)"
+      },
+      "response": []
+    },
+    {
+      "name": "Process Ability - Stench (1)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"raw_id\": \"abc1234567890\",\n  \"user_id\": \"1234567\",\n  \"pokemon_ability_id\": \"1\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/process-ability",
+          "host": ["{{base_url}}"],
+          "path": ["process-ability"]
+        },
+        "description": "Process Stench ability"
+      },
+      "response": []
+    },
+    {
+      "name": "Process Ability - Overgrow (65)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"raw_id\": \"def0987654321\",\n  \"user_id\": \"9876543\",\n  \"pokemon_ability_id\": \"65\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/process-ability",
+          "host": ["{{base_url}}"],
+          "path": ["process-ability"]
+        },
+        "description": "Process Overgrow ability"
+      },
+      "response": []
+    },
+    {
+      "name": "Retrieve Abilities by Raw ID and User ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/abilities/7dsa8d7sa9dsa/5199434",
+          "host": ["{{base_url}}"],
+          "path": ["abilities", "7dsa8d7sa9dsa", "5199434"]
+        },
+        "description": "Retrieve stored abilities for specific raw_id and user_id"
+      },
+      "response": []
+    },
+    {
+      "name": "Process Ability - Invalid ID (Error Case)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"raw_id\": \"test123456789\",\n  \"user_id\": \"9999999\",\n  \"pokemon_ability_id\": \"99999\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/process-ability",
+          "host": ["{{base_url}}"],
+          "path": ["process-ability"]
+        },
+        "description": "Test error handling with invalid ability ID"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ]
+}
