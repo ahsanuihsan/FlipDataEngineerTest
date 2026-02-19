@@ -299,16 +299,6 @@ flip-data-engineer-test/
 - Use type hints
 - Document functions with docstrings
 
-### Adding New Features
-1. Create feature branch
-2. Implement changes
-3. Add tests
-4. Update documentation
-5. Submit pull request
-
-## 📞 Support
-
-For questions or issues, please open an issue in the repository.
 
 ## 📄 License
 
