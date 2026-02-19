@@ -316,6 +316,6 @@ This project is created for Flip Data Engineer technical test.
 
 ---
 
-**Author**: [Your Name]
+**Author**: Ihsan Ahsanu Amala
 **Date**: February 2026
 **Version**: 1.0.0
